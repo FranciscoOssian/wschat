@@ -15,7 +15,7 @@ const io = require("socket.io")(server, {
   maxHttpBufferSize: 1e8
 });
 
-port = process.env.PORT | 8000
+port = process.env.PORT || 8000
 
 //used only to run the example site ---------------------------
 app.use( express.static( path.join( __dirname, 'public' ) ) )
