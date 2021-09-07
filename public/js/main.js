@@ -1,6 +1,6 @@
 const { useState, useEffect } = React
 
-const socket = io(`http://192.168.0.51:8000`)
+const socket = io(`https://wschatmeu.herokuapp.com`)
 
 let messagesTemp = []
 
