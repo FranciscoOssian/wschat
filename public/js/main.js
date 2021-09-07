@@ -1,6 +1,6 @@
 const { useState, useEffect } = React
 
-const socket = io(`https://wschatmeu.herokuapp.com`)
+const socket = io( `https://wschatmeu.herokuapp.com` )
 
 let messagesTemp = []
 
@@ -11,26 +11,35 @@ const App = () => {
   const [messages, setMessages] = useState([])
   const [myToken, setMyToken] = useState('')
 
+  useEffect( () => {
+    return () => {
+      socket.removeListeners()
+      socket.disconnect()
+      console.log('exit')
+    }
+  }, [] )
+
   useEffect(() => {
     socket.on('connect', () => {
       console.log('your id is', socket.id)
       setMyToken(socket.id)
-    })
 
-    socket.on('message', message => {
-      messagesTemp.push(message)
-      setMessages([...messagesTemp])
+      socket.on('message', message => {
+        messagesTemp.push(message)
+        setMessages([...messagesTemp])
+      })
     })
-
   }, [])
 
   const onSubmitHandler = (e) => {
     e.preventDefault()
-    socket.emit('message',
-      {
-        content: message,
-        author_uid_sender: socket.id,
-        author_uid_to: reciver
+    const data = {
+      content: message,
+      author_uid_sender: socket.id,
+      author_uid_to: reciver
+    }
+    socket.emit('message', data, response => {
+        if(response.status === 'error') alert('invalid user')
       }
     )
   }

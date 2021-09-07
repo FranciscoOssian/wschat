@@ -1,8 +1,7 @@
+require('dotenv').config()
 const path = require('path');
-
 const express = require('express');
 const app = express();
-
 const server = require('http').createServer(app);
 
 const io = require("socket.io")(server, {
@@ -31,10 +30,17 @@ io.on('connection', (socket) => {
   
   console.log(`a user connected ${socket.id}`);
 
-  socket.on('message', message => {
-    console.log(`message recived:`)
-    console.log(`${message.author_uid_sender} falou ${message.content} para ${message.author_uid_to}`)
-    io.sockets.to(message.author_uid_to).emit('message', message);
+  socket.on('message', (message, callback) => {
+
+    if( ! io.sockets.sockets.has(message.author_uid_to) ) return callback({status: 'error'})
+    io.sockets.sockets.get(message.author_uid_to).emit('message', message);
+
+    return callback({status: 'ok'})
+  })
+
+  socket.on('disconnect', reason => {
+    //user disconnect
+    console.log(reason)
   })
 
 });
